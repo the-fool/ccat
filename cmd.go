@@ -1,4 +1,3 @@
-// Sample asset-quickstart exports assets to given path.
 package main
 
 import (
