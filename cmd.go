@@ -23,8 +23,10 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	bucketName := fmt.Sprintf("%s-for-assets", projectID)
 	assetDumpFile := fmt.Sprintf("gs://%s/my-assets.txt", bucketName)
+
 	req := &assetpb.ExportAssetsRequest{
 		Parent:      fmt.Sprintf("projects/%s", projectID),
 		ContentType: 1,
@@ -38,20 +40,21 @@ func main() {
 			},
 		},
 	}
+
 	operation, err := client.ExportAssets(ctx, req)
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	if _, err := operation.Wait(ctx); err != nil {
 		log.Fatal(err)
 	}
-	// Creates a client.
+
 	storageClient, err := storage.NewClient(ctx)
 	if err != nil {
 		log.Fatalf("Failed to create client: %v", err)
 	}
 
-	// Sets the name for the new bucket.
 	bkt := storageClient.Bucket(bucketName)
 	obj := bkt.Object("my-assets.txt")
 	r, err := obj.NewReader(ctx)
@@ -60,6 +63,7 @@ func main() {
 	}
 
 	defer r.Close()
+
 	if _, err := io.Copy(os.Stdout, r); err != nil {
 		log.Fatalf("Failed to copy assets: %v", err)
 	}
